@@ -3,6 +3,7 @@ import { CssBaseline } from '@mui/material';
 import { Routes, Route } from 'react-router-dom';
 import IndexPage from './pages/IndexPage';
 import LoginPage from './pages/LoginPage';
+import SigninPage from './pages/SigninPage';
 import Navbar from './components/NavBar';
 import theme from './utils/theme';
 
@@ -16,7 +17,7 @@ function App() {
           <Routes>
             <Route path="/" element={<IndexPage />} />
             <Route path="/login" element={<LoginPage/>} />
-            <Route path="/signin" element={<div>Página de Cadastro</div>} />
+            <Route path="/signin" element={<SigninPage/>} />
           </Routes>
         </main>
       </div>

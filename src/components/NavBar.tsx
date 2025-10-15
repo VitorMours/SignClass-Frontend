@@ -18,7 +18,7 @@ const Navbar: React.FC<NavbarProps> = ({ logoText = "SignClass" }) => {
 
   return (
     <AppBar 
-      position="static"
+      position="fixed"
       sx={{
         backgroundColor: theme.palette.background.paper,
         color: theme.palette.text.primary,
