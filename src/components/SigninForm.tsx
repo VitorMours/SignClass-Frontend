@@ -15,7 +15,7 @@ const SigninForm: React.FC = () => {
       }}
     >
       <Paper elevation={2} sx={{ display:"flex", height: "65%", width: "65%"}}>
-        <CardMedia component="img" image="src/assets/signin_form_image.webp" alt="signin_form_image" sx={{ width: "50%", objectFit: "cover" }}>
+        <CardMedia component="img" image="src/assets/login_form_image.jpg" alt="login_form_image" sx={{ width: "50%", objectFit: "cover" }}>
         </CardMedia>
         <Box sx={{ padding: "12px", border: "1px solid lightgray", display: "flex", width:"50%", flexDirection:"column", justifyContent:"space-evenly", alignItems:"center" }}>
           <Box sx={{ textAlign:"center", marginBottom:2}}>
@@ -30,7 +30,7 @@ const SigninForm: React.FC = () => {
               </Box>
               <FormField label={"Email"} type={"email"} required={true}/>
               <FormField label={"Senha"} type={"password"} required={true}/>
-              <Link component={RouterLink} to="/signin" sx={{ marginX:"10%", display:"flex", alignSelf:"end", fontSize:"80%"}}>Ja possui uma conta? Entao faca login</Link>
+              <Link component={RouterLink} to="/login" sx={{ marginX:"10%", display:"flex", alignSelf:"end", fontSize:"80%"}}>Ja possui uma conta? Entao faca login</Link>
               <Button variant="contained" color="primary" type="submit" sx={{ marginTop:5, width:"50%" }}>Sign in</Button>
           </Box>
         </Box>
