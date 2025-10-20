@@ -1,30 +1,7 @@
-interface LoginCredentials {
-    email: string;
-    password: string;
-}
-
-interface SignupCredentials {
-    first_name: string;
-    last_name: string;
-    email: string;
-    password: string;
-}
-
-interface User {
-    id: string;
-    email: string;
-    first_name: string;
-    last_name: string;
-}
-
-interface AuthResponse {
-    user: User;
-    token: string;
-    message?: string;
-}
+import type { LoginCredentialsInterface, SignupCredentials, LoginResponseInterface } from "../interfaces/authInterface";
 
 const authService = {
-    login: async (data: LoginCredentials): Promise<AuthResponse> => {
+    login: async (data: LoginCredentialsInterface): Promise<LoginResponseInterface> => {
         const response = await fetch('/api/auth/login', {
             method: "POST",
             headers: {
@@ -46,7 +23,7 @@ const authService = {
         return await response.json();
     },
 
-    signup: async (data: SignupCredentials): Promise<AuthResponse> => {
+    signup: async (data: SignupCredentials): Promise<LoginResponseInterface> => {
         const response = await fetch('/api/auth/signup', {
             method: "POST",
             headers: {
@@ -64,20 +41,6 @@ const authService = {
 
         return await response.json();
     },
-
-    logout: async (): Promise<void> => {
-        // Remove token do localStorage ou faz requisição para logout no backend
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        
-        // Se quiser fazer logout no backend também:
-        // const response = await fetch('/api/auth/logout', {
-        //     method: "POST",
-        //     headers: {
-        //         "Authorization": `Bearer ${localStorage.getItem('token')}`
-        //     }
-        // });
-    }
 };
 
 export default authService;

@@ -5,6 +5,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import IndexPage from "./pages/IndexPage";
 import LoginPage from "./pages/LoginPage";
 import SigninPage from "./pages/SigninPage";
+import DashboardPage from "./pages/DashboardPage";
 import Navbar from "./components/NavBar";
 import theme from "./utils/theme";
 
@@ -14,14 +15,12 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="App">
-          <Navbar />
-          <main>
             <Routes>
               <Route path="/" element={<IndexPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signin" element={<SigninPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
             </Routes>
-          </main>
         </div>
       </ThemeProvider>
     </QueryClientProvider>

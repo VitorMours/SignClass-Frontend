@@ -1,0 +1,26 @@
+export interface LoginCredentialsInterface {
+    email: string;
+    password: string;
+}
+
+export interface LoginResponseInterface{
+    token: string;
+    email: string;
+    status?: string;
+}
+
+export interface SignupCredentials {
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
+}
+
+export interface User {
+    id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+}
+
+

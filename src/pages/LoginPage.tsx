@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import type { LoginResponseInterface } from "../interfaces/authInterface";
 import {
   Box,
   Paper,
@@ -7,134 +8,151 @@ import {
   Button,
   Link,
   CircularProgress,
-  Alert // Adicionei o Alert para mostrar erros
+  Alert,
 } from "@mui/material";
-import { Link as RouterLink, useNavigate } from "react-router-dom"; // Corrigi a importação
+
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import FormField from "../components/FormField";
 import authService from "../services/authService";
+import Navbar from "../components/NavBar";
 
 const LoginPage: React.FC = () => {
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null); // Estado para erro
-    const emailRef = useRef<HTMLInputElement>(null);
-    const passwordRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
-    const handleSubmit = async (event: React.FormEvent) => {
-        event.preventDefault();
-        setIsLoading(true);
-        setError(null); // Limpa erros anteriores
-        
-        const email = emailRef.current?.value || "";
-        const password = passwordRef.current?.value || "";
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setIsLoading(true);
+    setError(null);
 
-        if(!email || !password){
-            setError("Por favor, preencha todos os campos");
-            setIsLoading(false);
-            return;
-        }
+    const email = emailRef.current?.value || "";
+    const password = passwordRef.current?.value || "";
 
-        try{
-            const response = await authService.login({ "email": email, "password": password });
-            console.log(response);
-            
-            // Se o login for bem-sucedido, redirecione
-            // navigate("/dashboard"); // Descomente quando quiser redirecionar
-            
-        }catch(error: any){
-            const errorMessage = error.response?.data?.message || "Erro ao fazer login";
-            setError(errorMessage);
-            console.error(`Houve um erro de carregamento: ${errorMessage}`);
-        }finally{
-            setIsLoading(false);
-        }
+    if (!email || !password) {
+      setError("Por favor, preencha todos os campos");
+      setIsLoading(false);
+      return;
     }
 
-    return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100dvh",
-        padding: 2,
-      }}
-    >
-      <Paper
-        elevation={2}
-        sx={{ display: "flex", height: "65%", width: "65%" }}
-      >
-        <CardMedia
-          component="img"
-          image="src/assets/signin_form_image.webp"
-          alt="signin_form_image"
-          sx={{ width: "50%", objectFit: "cover" }}
-        />
-        <Box
-          sx={{
-            padding: "12px",
-            border: "1px solid lightgray",
-            display: "flex",
-            width: "50%",
-            flexDirection: "column",
-            justifyContent: "space-evenly",
-            alignItems: "center",
-          }}
-        >
-          <Box sx={{ textAlign: "center", marginBottom: 2, height: "10%" }}>
-            <Typography variant="h4" sx={{ margin: 1 }}>
-              Login
-            </Typography>
-            <Typography variant="caption">
-              Vendo oque as pessoas tem a dizer
-            </Typography>
-          </Box>
+    try {
+      const response: LoginResponseInterface = await authService.login({
+        email: email,
+        password: password,
+      });
+      if (response.status === "success") {
+        navigate("/dashboard");
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message || "Erro ao fazer login";
+      setError(errorMessage);
+      console.error(`Houve um erro de carregamento: ${errorMessage}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  return (
+    <>
+      <Navbar />
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100dvh",
+          padding: 2,
+        }}
+      >
+        <Paper
+          elevation={2}
+          sx={{ display: "flex", height: "65%", width: "65%" }}
+        >
+          <CardMedia
+            component="img"
+            image="src/assets/signin_form_image.webp"
+            alt="signin_form_image"
+            sx={{ width: "50%", objectFit: "cover" }}
+          />
           <Box
-            component="form"
-            onSubmit={handleSubmit}
-            method="post"
             sx={{
+              padding: "12px",
+              border: "1px solid lightgray",
               display: "flex",
+              width: "50%",
               flexDirection: "column",
+              justifyContent: "space-evenly",
               alignItems: "center",
-              width: "100%",
-              height: "50%",
             }}
           >
-            {/* Mostra erro se existir */}
-            {error && (
-              <Alert severity="error" sx={{ width: '80%', mb: 2 }}>
-                {error}
-              </Alert>
-            )}
+            <Box sx={{ textAlign: "center", marginBottom: 2, height: "10%" }}>
+              <Typography variant="h4" sx={{ margin: 1 }}>
+                Login
+              </Typography>
+              <Typography variant="caption">
+                Vendo oque as pessoas tem a dizer
+              </Typography>
+            </Box>
 
-            <FormField label={"Email"} type={"email"} required={true} inputRef={emailRef}/>
-            <FormField label={"Password"} type={"password"} required={true} inputRef={passwordRef}/>
-            <Link
-              component={RouterLink}
-              to="/signup" // Mudei para signup que faz mais sentido
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              method="post"
               sx={{
-                marginX: "10%",
                 display: "flex",
-                alignSelf: "end",
-                fontSize: "80%",
+                flexDirection: "column",
+                alignItems: "center",
+                width: "100%",
+                height: "50%",
               }}
             >
-              nao possui cadastro? Faca a sua conta.
-            </Link>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              disabled={isLoading} // Desabilita durante loading
-              sx={{ marginTop: 5, width: "50%" }}
-            >
-              {isLoading ? <CircularProgress size={24} /> : "Sign in"}
-            </Button>
+              {error && (
+                <Alert severity="error" sx={{ width: "80%", mb: 2 }}>
+                  {error}
+                </Alert>
+              )}
+
+              <FormField
+                label={"Email"}
+                type={"email"}
+                required={true}
+                inputRef={emailRef}
+              />
+              <FormField
+                label={"Password"}
+                type={"password"}
+                required={true}
+                inputRef={passwordRef}
+              />
+              <Link
+                component={RouterLink}
+                to="/signup"
+                sx={{
+                  marginX: "10%",
+                  display: "flex",
+                  alignSelf: "end",
+                  fontSize: "80%",
+                }}
+              >
+                nao possui cadastro? Faca a sua conta.
+              </Link>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                disabled={isLoading}
+                sx={{ marginTop: 5, width: "50%" }}
+              >
+                {isLoading ? <CircularProgress size={24} /> : "Sign in"}
+              </Button>
+            </Box>
           </Box>
-        </Box>
-      </Paper>
-    </Box>
+        </Paper>
+      </Box>
+    </>
   );
 };
 
