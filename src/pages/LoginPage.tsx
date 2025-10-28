@@ -15,6 +15,7 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import FormField from "../components/FormField";
 import authService from "../services/authService";
 import Navbar from "../components/NavBar";
+import useUser from "../hooks/useUser";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -38,12 +39,19 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      const response: LoginResponseInterface = await authService.login({
+      const response = await authService.login({
         email: email,
-        password: password,
+        password: password
       });
-      if (response.status === "success") {
+      
+      if (response.ok && response.data.access) {
+        const userName = await authService.authorize(response);
         navigate("/dashboard");
+      } else {
+        console.log('Falha no login:', {
+          ok: response.ok,
+          hasToken: Boolean(response.data?.access)
+        });
       }
     } catch (error: any) {
       const errorMessage =

@@ -1,46 +1,79 @@
-import type { LoginCredentialsInterface, SignupCredentials, LoginResponseInterface } from "../interfaces/authInterface";
+// authService.ts
+import type { 
+    LoginCredentialsInterface, 
+    SignupCredentials, 
+    AuthApiResponse 
+} from "../interfaces/authInterface";
+
+import userService from "./userService";
 
 const authService = {
-    login: async (data: LoginCredentialsInterface): Promise<LoginResponseInterface> => {
+    login: async (data: LoginCredentialsInterface): Promise<AuthApiResponse> => {
         const response = await fetch('/api/auth/login', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                email: data.email,  // Removi as template strings desnecessárias
-                password: data.password
+                email: data.email,
+                password: data.password,
             })
         });
-
+        
+        const responseData = await response.json().catch(() => null);
+        
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({
-                message: `HTTP error! status: ${response.status}`
-            }));
-            throw new Error(errorData.message || 'Login failed');
+            throw new Error(responseData?.message || `HTTP error! status: ${response.status}`);
         }
 
-        return await response.json();
+        return {
+            data: responseData,
+            status: response.status,
+            statusText: response.statusText,
+            ok: response.ok
+        };
     },
 
-    signup: async (data: SignupCredentials): Promise<LoginResponseInterface> => {
+    signup: async (data: SignupCredentials): Promise<AuthApiResponse> => {
         const response = await fetch('/api/auth/signup', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(data)  // Pode enviar o objeto diretamente
+            body: JSON.stringify(data)
         });
 
+        const responseData = await response.json().catch(() => null);
+
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({
-                message: `HTTP error! status: ${response.status}`
-            }));
-            throw new Error(errorData.message || 'Signup failed');
+            throw new Error(responseData?.message || `HTTP error! status: ${response.status}`);
         }
 
-        return await response.json();
+        return {
+            data: responseData,
+            status: response.status,
+            statusText: response.statusText,
+            ok: response.ok
+        };
     },
+
+    authorize: async (data: AuthApiResponse): Promise<string> => {
+        localStorage.setItem("refresh", data.data.refresh);
+        localStorage.setItem("access", data.data.access);
+        localStorage.setItem("email", data.data.email);
+
+        // TODO: Preciso pegar a informacao do usuario por meio do service
+        try{
+            const response = await userService.getUserData(data.data.email);
+            const userData = response.data[0];
+            const userName: string = userData.first_name;
+            return userName;
+        }catch(error){
+            console.log(error);
+            return "Visitante";
+        }
+
+    }
 };
 
 export default authService;

@@ -4,9 +4,17 @@ export interface LoginCredentialsInterface {
 }
 
 export interface LoginResponseInterface{
-    token: string;
+    access: string;
+    refresh: string;
     email: string;
     status?: string;
+}
+
+export interface AuthApiResponse {
+    data: LoginResponseInterface;
+    status: number;
+    statusText: string;
+    ok: boolean;
 }
 
 export interface SignupCredentials {
